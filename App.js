@@ -143,9 +143,10 @@ const styles = StyleSheet.create({
   },
   headerText: { textAlign: "center", fontSize: 28, marginTop: 50 },
   select: {
-    alignItems: "flex-end",
+    alignItems: "center",
     marginHorizontal: 10,
     marginTop: 20,
+    backgroundColor: "#dee1e3",
   },
   selectText: { fontSize: 22 },
   content: {
@@ -161,10 +162,12 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     backgroundColor: "#dee1e3",
+    borderWidth: 1,
+    borderRadius: 40,
   },
-  buttonTextStyle: { fontSize: 20 },
+  buttonTextStyle: { fontSize: 30 },
   footer: {
     flex: 1,
-    backgroundColor: "red",
+    backgroundColor: "white",
   },
 });
