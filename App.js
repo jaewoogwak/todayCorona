@@ -51,10 +51,10 @@ const CITY_LIST2 = {
 export default function App() {
   const [region, setRegion] = useState({});
   const [total, setTotal] = useState({});
-
   const [city, setCity] = useState([]);
-  const [view, setView] = useState({});
+
   const [locate, setLocate] = useState("");
+  const [view, setView] = useState({});
   const getData = async () => {
     const totalResponse = (
       await axios.get(`https://api.corona-19.kr/korea/?serviceKey=${API_KEY}`)
@@ -94,7 +94,7 @@ export default function App() {
             onSelect={(selectedItem, index) => {
               console.log(selectedItem, index);
               setLocate(selectedItem);
-              console.log(region[CITY_LIST2[selectedItem]]);
+              setView(region[CITY_LIST2[selectedItem]]);
             }}
             buttonTextAfterSelection={(selectedItem, index) => {
               // text represented after item is selected
@@ -110,7 +110,18 @@ export default function App() {
         </View>
       </View>
       <View style={styles.content}>
-        <Text>{locate}</Text>
+        {/* {Object.values(view).map((data) => (
+          <View style={styles.data}>
+            <Text style={styles.dataText}>{data}</Text>
+          </View>
+        ))} */}
+        <View style={styles.data}>
+          <Text style={styles.dataText}>{view.countryName}</Text>
+          <Text style={styles.dataText}>신규 확진 : {view.newCase}</Text>
+          <Text style={styles.dataText}>사망자 수 :{view.death}</Text>
+          <Text style={styles.dataText}>완치자 수 :{view.recovered}</Text>
+          <Text style={styles.dataText}>총 확진 : {view.totalCase}</Text>
+        </View>
       </View>
       <View style={styles.footer}></View>
     </View>
@@ -139,6 +150,14 @@ const styles = StyleSheet.create({
   selectText: { fontSize: 22 },
   content: {
     flex: 8,
+    marginTop: 30,
+  },
+  data: {},
+  dataText: {
+    fontSize: 30,
+    textAlign: "center",
+    marginHorizontal: 20,
+    marginVertical: 15,
   },
   buttonStyle: {
     backgroundColor: "#dee1e3",
