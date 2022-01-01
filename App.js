@@ -27,12 +27,34 @@ const CITY_LIST = {
   jeju: "제주",
 };
 
+const CITY_LIST2 = {
+  한국: "korea",
+  서울: "seoul",
+  부산: "busan",
+  대구: "daegu",
+  인천: "incheon",
+  광주: "gwangju",
+  대전: "daejeon",
+  울산: "ulsan",
+  세종: "sejong",
+  경기: "gyeonggi",
+  강원: "gangwon",
+  충북: "chungbuk",
+  충남: "chungnam",
+  전북: "jeonbuk",
+  전남: "jeonnam",
+  경북: "gyeongbuk",
+  경남: "gyeongnam",
+  제주: "jeju",
+};
+
 export default function App() {
   const [region, setRegion] = useState({});
   const [total, setTotal] = useState({});
 
   const [city, setCity] = useState([]);
-  const [view, setView] = useState("");
+  const [view, setView] = useState({});
+  const [locate, setLocate] = useState("");
   const getData = async () => {
     const totalResponse = (
       await axios.get(`https://api.corona-19.kr/korea/?serviceKey=${API_KEY}`)
@@ -43,13 +65,11 @@ export default function App() {
         `https://api.corona-19.kr/korea/country/new/?serviceKey=${API_KEY}`
       )
     ).data;
-    // console.log("getData for region", regionResponse);
-    console.log(Object.keys(regionResponse));
+    console.log("getData for region", regionResponse);
 
     const newCity = Object.values(CITY_LIST);
     console.log(Object.values(CITY_LIST));
 
-    // console.log("newcity", newCity);
     setCity(newCity);
     setTotal(totalResponse);
     setRegion(regionResponse);
@@ -58,7 +78,8 @@ export default function App() {
   useEffect(() => {
     getData();
   }, []);
-  console.log(view);
+
+  console.log("view", view);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -72,7 +93,8 @@ export default function App() {
             data={city}
             onSelect={(selectedItem, index) => {
               console.log(selectedItem, index);
-              setView(selectedItem);
+              setLocate(selectedItem);
+              console.log(region[CITY_LIST2[selectedItem]]);
             }}
             buttonTextAfterSelection={(selectedItem, index) => {
               // text represented after item is selected
@@ -87,7 +109,9 @@ export default function App() {
           />
         </View>
       </View>
-      <View style={styles.content}></View>
+      <View style={styles.content}>
+        <Text>{locate}</Text>
+      </View>
       <View style={styles.footer}></View>
     </View>
   );
