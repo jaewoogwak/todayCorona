@@ -49,12 +49,14 @@ const CITY_LIST2 = {
 };
 
 export default function App() {
+  const [ok, setOk] = useState(false);
   const [region, setRegion] = useState({});
   const [total, setTotal] = useState({});
   const [city, setCity] = useState([]);
 
   const [locate, setLocate] = useState("");
   const [view, setView] = useState({});
+
   const getData = async () => {
     const totalResponse = (
       await axios.get(`https://api.corona-19.kr/korea/?serviceKey=${API_KEY}`)
@@ -69,7 +71,10 @@ export default function App() {
 
     const newCity = Object.values(CITY_LIST);
     console.log(Object.values(CITY_LIST));
-
+    console.log("totalREs", totalResponse);
+    // const v = newCity.map((value) => `-> ${value}`);
+    // console.log("vvvvvvv", v);
+    // setCity(v);
     setCity(newCity);
     setTotal(totalResponse);
     setRegion(regionResponse);
@@ -82,7 +87,7 @@ export default function App() {
   console.log("view", view);
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <View style={styles.header}>
         <Text style={styles.headerText}>코로나19 감염 현황</Text>
         <View style={styles.select}>
@@ -95,6 +100,7 @@ export default function App() {
               console.log(selectedItem, index);
               setLocate(selectedItem);
               setView(region[CITY_LIST2[selectedItem]]);
+              setOk(false);
             }}
             buttonTextAfterSelection={(selectedItem, index) => {
               // text represented after item is selected
@@ -108,21 +114,75 @@ export default function App() {
             }}
           />
         </View>
-      </View>
-      <View style={styles.content}>
-        {/* {Object.values(view).map((data) => (
-          <View style={styles.data}>
-            <Text style={styles.dataText}>{data}</Text>
-          </View>
-        ))} */}
-        <View style={styles.data}>
-          <Text style={styles.dataText}>{view.countryName}</Text>
-          <Text style={styles.dataText}>신규 확진 : {view.newCase}</Text>
-          <Text style={styles.dataText}>사망자 수 :{view.death}</Text>
-          <Text style={styles.dataText}>완치자 수 :{view.recovered}</Text>
-          <Text style={styles.dataText}>총 확진 : {view.totalCase}</Text>
+        <View>
+          <Text style={styles.updateTime}>{total.updateTime}</Text>
         </View>
       </View>
+      <View style={styles.content}>
+        <View style={styles.data}>
+          <View style={styles.mainView}>
+            <View style={styles.mv1}>
+              <Text
+                style={{
+                  marginVertical: 5,
+                  textAlign: "center",
+                  fontSize: 22,
+                  color: "white",
+                }}
+              >
+                {" "}
+                확진환자{" "}
+              </Text>
+              <Text style={({ ...styles.dataText }, styles.totalCase)}>
+                {view.totalCase}
+              </Text>
+              <Text style={styles.newCase}>{view.newCase}🔺</Text>
+            </View>
+            <View style={styles.mv2}>
+              <Text
+                style={{
+                  marginVertical: 5,
+                  textAlign: "center",
+                  fontSize: 22,
+                  color: "white",
+                }}
+              >
+                {" "}
+                사망자{" "}
+              </Text>
+              <Text style={({ ...styles.dataText }, styles.totalDeath)}>
+                {view.death}
+              </Text>
+            </View>
+          </View>
+          <Text
+            style={{
+              ...styles.dataText,
+              marginVertical: 40,
+              fontWeight: "600",
+            }}
+          >
+            {`${new Date().getMonth() + 1}.${new Date().getDate()}`} 신규합계{" "}
+            <Text style={{ color: "red", fontWeight: "800" }}>
+              {view.newCase}
+            </Text>
+          </Text>
+          <Text
+            style={{
+              ...styles.dataText,
+              fontSize: 24,
+              marginVertical: -40,
+              fontWeight: "400",
+            }}
+          >
+            완치자 수{" "}
+            <Text style={{ color: "blue", fontWeight: "600" }}>
+              {view.recovered}
+            </Text>
+          </Text>
+        </View>
+      </View>
+
       <View style={styles.footer}></View>
     </View>
   );
@@ -132,21 +192,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // alignItems: "center",
-    // justifyContent: "center",
   },
   header: {
     flex: 2,
     justifyContent: "center",
     alignContent: "space-between",
-    backgroundColor: "white",
+    backgroundColor: "#004170",
+    paddingTop: 10,
   },
-  headerText: { textAlign: "center", fontSize: 28, marginTop: 50 },
+  headerText: {
+    textAlign: "center",
+    fontSize: 30,
+    marginTop: 50,
+    color: "white",
+  },
+  updateTime: { textAlign: "center", fontWeight: "800" },
   select: {
     alignItems: "center",
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
+    paddingVertical: 5,
     marginTop: 20,
-    backgroundColor: "#dee1e3",
+    backgroundColor: "#004170",
+    borderTopWidth: 1,
+    borderTopColor: "white",
+    marginVertical: 5,
   },
   selectText: { fontSize: 22 },
   content: {
@@ -160,12 +229,35 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 15,
   },
+  totalCase: { fontSize: 35, fontWeight: "700", color: "white" },
+  totalDeath: { fontSize: 35, fontWeight: "700", color: "white" },
+  newCase: {
+    textAlign: "center",
+    fontSize: 15,
+    color: "white",
+  },
+  nc1: { fontWeight: "500" },
+  mainView: {
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "#004170",
+    paddingVertical: 10,
+  },
+  mv1: {
+    backgroundColor: "white",
+    marginHorizontal: 30,
+    backgroundColor: "#004170",
+  },
+  mv2: {
+    backgroundColor: "white",
+    marginHorizontal: 45,
+    backgroundColor: "#004170",
+  },
   buttonStyle: {
-    backgroundColor: "#dee1e3",
-    borderWidth: 1,
+    backgroundColor: "#004170",
     borderRadius: 40,
   },
-  buttonTextStyle: { fontSize: 30 },
+  buttonTextStyle: { fontSize: 30, color: "white", fontWeight: "600" },
   footer: {
     flex: 1,
     backgroundColor: "white",
