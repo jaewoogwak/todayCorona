@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import axios from "axios";
 import key from "./key";
 import SelectDropdown from "react-native-select-dropdown";
+import Pie from "./pieChart";
 
 const API_KEY = key;
 const CITY_LIST = {
@@ -56,7 +57,9 @@ export default function App() {
 
   const [locate, setLocate] = useState("");
   const [view, setView] = useState({});
-
+  const [percentage, setPercentage] = useState(0);
+  const [cn, setCn] = useState("");
+  const [tc, setTc] = useState(0);
   const getData = async () => {
     const totalResponse = (
       await axios.get(`https://api.corona-19.kr/korea/?serviceKey=${API_KEY}`)
@@ -75,14 +78,33 @@ export default function App() {
     // const v = newCity.map((value) => `-> ${value}`);
     // console.log("vvvvvvv", v);
     // setCity(v);
+    console.log("total", totalResponse);
     setCity(newCity);
     setTotal(totalResponse);
     setRegion(regionResponse);
+    const allCase = total.TotalCase;
+    const cityCase = view.totalCase;
+    console.log("all, city", allCase, cityCase);
+    console.log(
+      "percentage",
+      ((parseInt(cityCase) / parseInt(allCase)) * 100).toFixed(2)
+    );
+    const newPercentage = (
+      (parseInt(cityCase) / parseInt(allCase)) *
+      100
+    ).toFixed(2);
+    setPercentage(newPercentage);
+
+    // const newCn = await totalResponse.NowCase;
+    // consaole.log("newCn", newCn);
+    // const newPer = (totalResponse.city1p * 0.01).toFixed(1);
+    // console.log("setPer", newPer);
+    // setPercentage(newPer);
   };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [view, percentage]);
 
   console.log("view", view);
   return (
@@ -114,7 +136,7 @@ export default function App() {
             }}
           />
         </View>
-        <View>
+        <View style={styles.updateView}>
           <Text style={styles.updateTime}>{total.updateTime}</Text>
         </View>
       </View>
@@ -182,6 +204,10 @@ export default function App() {
           </Text>
         </View>
       </View>
+      <View style={styles.pie}>
+        {console.log("Pie rendered", total.city1n)}
+        <Pie countryName={view.countryName} percentage={percentage}></Pie>
+      </View>
 
       <View style={styles.footer}></View>
     </View>
@@ -194,7 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flex: 2,
+    flex: 3,
     justifyContent: "center",
     alignContent: "space-between",
     backgroundColor: "#004170",
@@ -206,7 +232,12 @@ const styles = StyleSheet.create({
     marginTop: 50,
     color: "white",
   },
-  updateTime: { textAlign: "center", fontWeight: "800" },
+  updateView: { marginVertical: 5, marginBottom: 15 },
+  updateTime: {
+    textAlign: "center",
+    fontWeight: "800",
+    color: "white",
+  },
   select: {
     alignItems: "center",
     // marginHorizontal: 10,
@@ -214,12 +245,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "#004170",
     borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderTopColor: "white",
-    marginVertical: 5,
+    borderBottomColor: "white",
+    marginVertical: 0,
   },
   selectText: { fontSize: 22 },
   content: {
-    flex: 8,
+    flex: 5,
     marginTop: 30,
   },
   data: {},
@@ -258,6 +291,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   buttonTextStyle: { fontSize: 30, color: "white", fontWeight: "600" },
+  pie: { flex: 4 },
   footer: {
     flex: 1,
     backgroundColor: "white",
